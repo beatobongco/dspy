@@ -6,10 +6,12 @@ from dsp.modules.lm import LM
 
 try:
     import cohere
+
     cohere_api_error = cohere.errors.UnauthorizedError
 except ImportError:
     cohere_api_error = Exception
     # print("Not loading Cohere because it is not installed.")
+
 
 def backoff_hdlr(details):
     """Handler from https://pypi.org/project/backoff/"""
@@ -62,6 +64,7 @@ class Cohere(LM):
             "temperature": 0.0,
             "max_tokens": 150,
             "p": 1,
+            "num_generations": 1,
             **kwargs,
         }
         self.stop_sequences = stop_sequences
@@ -78,15 +81,21 @@ class Cohere(LM):
             "message": prompt,
             **kwargs,
         }
-        response = self.co.chat(**kwargs)
 
+        # remove num_generations from kwargs
+        kwargs_copy = kwargs.copy()
+        kwargs_copy.pop("num_generations", None)
 
-        self.history.append({
-            "prompt": prompt,
-            "response": response,
-            "kwargs": kwargs,
-            "raw_kwargs": raw_kwargs,
-        })
+        response = self.co.chat(**kwargs_copy)
+
+        self.history.append(
+            {
+                "prompt": prompt,
+                "response": response,
+                "kwargs": kwargs,
+                "raw_kwargs": raw_kwargs,
+            }
+        )
 
         return response
 
