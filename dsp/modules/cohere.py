@@ -83,8 +83,19 @@ class Cohere(LM):
         }
 
         # remove num_generations from kwargs
-        kwargs_copy = kwargs.copy()
-        kwargs_copy.pop("num_generations", None)
+        supported_keys = [
+            "message",
+            "model",
+            "chat_history",
+            "prompt_truncation",
+            "stop_sequences",
+            "temperature",
+            "max_tokens",
+            "p",
+        ]
+        kwargs_copy = {
+            key: value for key, value in kwargs.items() if key in supported_keys
+        }
 
         response = self.co.chat(**kwargs_copy)
 
