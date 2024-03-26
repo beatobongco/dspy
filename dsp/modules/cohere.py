@@ -7,6 +7,7 @@ from dsp.modules.lm import LM
 
 try:
     import cohere
+
     cohere_api_error = cohere.CohereAPIError
 except ImportError:
     cohere_api_error = Exception
@@ -32,12 +33,12 @@ def giveup_hdlr(details):
 class Cohere(LM):
     """Wrapper around Cohere's API.
 
-    Currently supported models include `command`, `command-nightly`, `command-light`, `command-light-nightly`.
+    Currently supported models include `command-r`, `command`, `command-nightly`, `command-light`, `command-light-nightly`.
     """
 
     def __init__(
         self,
-        model: str = "command-nightly",
+        model: str = "command-r",
         api_key: Optional[str] = None,
         stop_sequences: list[str] = [],
         **kwargs,
@@ -47,7 +48,7 @@ class Cohere(LM):
         ----------
         model : str
             Which pre-trained model from Cohere to use?
-            Choices are [`command`, `command-nightly`, `command-light`, `command-light-nightly`]
+            Choices are [`command-r`, `command`, `command-nightly`, `command-light`, `command-light-nightly`]
         api_key : str
             The API key for Cohere.
             It can be obtained from https://dashboard.cohere.ai/register.
